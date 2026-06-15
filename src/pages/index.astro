@@ -1,5 +1,6 @@
 ---
-
+import CardList from '../components/CardList.tsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 ---
 
 <html lang="en">
@@ -12,6 +13,7 @@
 		<title>Astro</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<h1 class="mb-5">I never get sick</h1>
+		<CardList client:load />
 	</body>
 </html>
