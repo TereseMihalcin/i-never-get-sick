@@ -1,5 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Walter+Turncoat&display=swap');
 body {
     background-color: #c8d6be;
+}
+h1 {
+    font-family: "Walter Turncoat", cursive;
+    font-size: 4rem;
+}
+p small {
+    font-family: "Walter Turncoat", cursive;
 }
 
 .card {
