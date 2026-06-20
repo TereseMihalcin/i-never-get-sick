@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 
-type Card = { id: number; title: string; body: string };
+type Time = { id: number; time: string; };
+type Card = { id: number; title: string; body: string; times: Time[]; };
+
+function nowForTimeInput() {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const d = new Date();
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 export default function CardList() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -15,7 +22,7 @@ export default function CardList() {
   }, [cards]);
 
   function addCard() {
-    setCards([...cards, { id: Date.now(), title: 'New card', body: '' }]);
+    setCards([...cards, { id: Date.now(), title: '', body: '', times: [{ id: Date.now(), time: nowForTimeInput() }] }]);
   }
 
   function removeCard(id: number) {
@@ -26,15 +33,44 @@ export default function CardList() {
     setCards(cards.map(card => card.id === id ? { ...card, ...changes } : card));
   }
 
+  function addTime(cardId: number) {
+    setCards(cards.map(card => card.id === cardId
+      ? { ...card, times: [...card.times, { id: Date.now(), time: nowForTimeInput() }] }
+      : card));
+  }
+
+  function removeTime(cardId: number, timeId: number) {
+    setCards(cards.map(card => card.id === cardId
+      ? { ...card, times: card.times.filter(time => time.id !== timeId) }
+      : card));
+  }
+
+  function editTime(cardId: number, timeId: number, value: string) {
+    setCards(cards.map(card => card.id === cardId
+      ? { ...card, times: card.times.map(time => time.id === timeId ? { ...time, time: value } : time) }
+      : card));
+  }
+
   return (
-    <div>
+    <div className="container">
+      <div className="row">
       {cards.map(card => (
-        <div key={card.id}>
-          <input value={card.title} onChange={e => editCard(card.id, { title: e.target.value })} />
-          <button onClick={() => removeCard(card.id)}>Remove</button>
+        <div className="card" key={card.id}>
+          <button className="deleteCard" onClick={() => removeCard(card.id)}>X</button>
+          <label>Medication</label>
+          <input value={card.title} onChange={e => editCard(card.id, { title: e.target.value })} placeholder="Medication Name"/>
+          <label>Time(s) to Take</label>
+          {card.times.map(time => (
+            <div className="time-row" key={time.id}>
+              <input type="time" value={time.time} onChange={e => editTime(card.id, time.id, e.target.value)}/>
+              <button className="delete" onClick={() => removeTime(card.id, time.id)}>X</button>
+            </div>
+          ))}
+          <button onClick={() => addTime(card.id)}>Add Time</button>
         </div>
       ))}
-      <button onClick={addCard}>Add Card</button>
+      </div>
+      <button onClick={addCard}>Add Medication</button>
     </div>
   );
 }
